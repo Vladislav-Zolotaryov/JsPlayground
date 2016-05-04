@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="semantic.css">
+</head>
+
+	<script src="jquery-2.2.3.js"></script>
+	<script src="semantic.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.min.js"></script>
+  <script src="react.js"></script>
+  <script src="react-dom.js"></script>      
+  
+  
+  <body>
+    <div id="container" class="ui container"></div>
+	
+	  <script type="text/babel">
+	var ProposalWindow = React.createClass({
+	
+	    show: function() {
+			$('.ui.modal').modal('show');
+		},
+		
+		componentDidMount: function() {
+		   $("#file-upload").change(function () {
+				$("#file-path-input").val($(this).val());
+			});
+
+		   $('.ui.form')
+			.form({
+				fields: {
+			  'name'     : 'empty',
+			  'comment'   : 'empty',
+			  'file-upload' : 'empty'
+			}
+		  });
+		
+		 
+			$('.ui.modal').modal({onApprove : function() {
+					return $('.ui.form').form('is valid');
+			}});
+		},
+		
+		validateForm: function() {
+			$('.ui.form').form('validate form');
+		},
+		
+		clearForm: function() {
+			$('.ui.form').form('clear');
+		},
+		
+		render: function() { 
+			return (
+			<div className="ui modal">
+			  <i className="close icon"></i>
+			  <div className="header">
+				New Proposal
+			  </div>
+			  <div className="content">
+					<form className="ui form">
+					  <div className="field">
+						<label>Username</label>
+						<input type="text" name="name"/>
+					  </div>
+					  <div className="field">
+						<label>Comment</label>
+						<textarea type="text" name="comment"></textarea>
+					  </div>
+
+					  <div className="field">
+							<div className="ui action input">
+								<input id="file-path-input" type="text"/>
+									<label htmlFor="file-upload" className="ui icon primary button">
+									<i className="file icon"></i>
+										File
+									</label>
+								<input type="file" name="file-upload" id="file-upload" style={{display:'none'}}/>
+							</div>
+					  </div>
+					  
+					  <div className="ui error message"></div>
+					</form>
+			  </div>
+			  <div className="actions">
+				<div className="ui positive button" onClick={this.validateForm}>OK</div>
+				<div className="ui negative button" onClick={this.clearForm}>Cancel</div>
+			  </div>
+			</div>
+		)}
+		
+	});
+	  	  
+	  
+	var MappingGrid = React.createClass({
+		 
+	  handleProposalClick: function(event) { 
+	     console.log("test")
+		 this.props.proposalWindow.show();
+	  },
+	
+	  getInitialState() {
+		  return {
+			  results: []
+		  };
+	  },
+	  	  
+	  componentDidMount: function() {
+		this.serverRequest = $.get(this.props.source, function (result) {
+		  this.setState({
+			results: result
+		  });
+		}.bind(this));
+	  },
+	
+      componentWillUnmount: function() {
+		this.serverRequest.abort();
+	  },
+	
+      render: function() { return (
+          <table className="ui sortable celled table">
+		  <thead>
+			<tr className="center aligned">
+			  <th className="three wide">Creation Time</th>
+			  <th className="three wide">File</th>
+			  <th className="two wide">Status</th>
+			  <th className="two wide">Last Action By</th>
+			  <th className="three wide">Comment</th>
+			  <th className="five wide">Actions</th>
+			</tr>
+		  </thead>
+		  <tbody>
+  
+  {this.state.results.map(function(result) {
+           return (<tr className={"center aligned " + function() {
+				if (result.status == 'Approved') {
+					return 'positive'
+				} else if (result.status == 'Rejected') {
+					return 'negative'
+				} else {
+					return ''
+				}
+			}() } 
+
+		   key={result.id}>
+			<td>{result.creation_time}</td>
+			<td><a href={'' + result.file}><button className="ui secondary button">Download</button></a></td>
+			<td>{result.status}</td>
+			<td>{result.last_action_by}</td>
+			<td>{result.comment}</td>
+			<td>
+				{result.actions.map(function(action, i) {
+					return (<button key={i} className={'ui ' + (action == "Approve" ? "positive" : "negative") + ' button'}>{action}</button>);
+				})}
+			</td>
+		   </tr>);
+  })}
+  
+  </tbody>
+  <tfoot>
+    <tr>
+	
+	<th colSpan ="6">
+	
+	 <div className="ui secondary menu">
+	  <div className="item">
+	     <div className="primary ui button" onClick={this.handleProposalClick}>Create New</div>
+	  </div>
+
+      <div className="ui right pagination menu">
+        <a className="icon item">
+          <i className="left chevron icon"></i>
+        </a>
+        <a className="item">1</a>
+        <a className="icon item">
+          <i className="right chevron icon"></i>
+        </a>
+      </div>
+	 </div> 
+	  
+    </th>
+  </tr></tfoot>
+</table>);
+        }
+      });
+	  
+	  var proposalWindow = ReactDOM.render(
+		  <ProposalWindow/>,
+          document.getElementById('container')
+       ); 
+	   
+	 ReactDOM.render(
+		  <MappingGrid source='http://localhost:3000/proposals' proposalWindow={proposalWindow}/>,
+          document.getElementById('container')
+       ); 
+  </script>
+  </body>
+</html>

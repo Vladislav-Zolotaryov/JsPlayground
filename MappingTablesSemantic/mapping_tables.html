@@ -1,0 +1,125 @@
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="semantic.css">
+</head>
+
+<script src="jquery-2.2.3.js"></script>
+<script src="semantic.js"></script>
+
+<script type="text/javascript">
+$( document ).ready(function() {
+	$("#file-upload").change(function () {
+		$("#file-path-input").val($(this).val());
+	});
+
+   $('.ui.form')
+	.form({
+		fields: {
+      'name'     : 'empty',
+      'description'   : 'empty',
+      'file-upload' : 'empty'
+    }
+  });
+});
+</script>
+
+<div class="ui modal">
+  <i class="close icon"></i>
+  <div class="header">
+    New Proposal
+  </div>
+  <div class="content">
+		<form class="ui form">
+		  <div class="field">
+			<label>Username</label>
+			<input type="text" name="name">
+		  </div>
+		  <div class="field">
+			<label>Description</label>
+			<textarea type="text" name="description"></textarea>
+		  </div>
+
+		  <div class="field">
+				<div class="ui action input">
+					<input id="file-path-input" type="text">
+						<label for="file-upload" class="ui icon primary button">
+						<i class="file icon"></i>
+							File
+						</label>
+					<input type="file" name="file-upload" id="file-upload" style="display:none">
+				</div>
+		  </div>
+		  
+		  <div class="ui error message"></div>
+		</form>
+  </div>
+  <div class="actions">
+    <div class="ui positive button" onclick="$('.ui.form').form('validate form')">OK</div>
+    <div class="ui negative button" onclick="$('.ui.form').form('clear')">Cancel</div>
+  </div>
+</div>
+
+<div class="ui container">
+
+<table class="ui sortable celled table">
+  <thead>
+    <tr>
+	  <th class="three wide center aligned">Creation Time</th>
+      <th class="three wide center aligned">File</th>
+	  <th class="three wide center aligned">Status</th>
+	  <th class="three wide center aligned">Last Action By</th>
+      <th class="four wide center aligned">Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+  
+  <tr>
+  <td>TEST</td>
+  <td>TEST</td>
+  <td>TEST</td>
+  <td>TEST</td>
+  <td>TEST</td>
+  </tr>
+    <tr>
+  <td>TEST</td>
+  <td>TEST</td>
+  <td>TEST</td>
+  <td>TEST</td>
+  <td>TEST</td>
+  </tr>
+  
+  </tbody>
+  <tfoot>
+    <tr>
+	
+<th colspan="5">
+	
+	 <div class="ui secondary menu">
+	  <div class="item">
+        <div class="primary ui button" onclick="$('.ui.modal').modal({onApprove : function() {
+	  return $('.ui.form').form('is valid');
+    }}).modal('show')">Create New</div>
+	  </div>
+
+	  
+	
+      <div class="ui right pagination menu">
+        <a class="icon item">
+          <i class="left chevron icon"></i>
+        </a>
+        <a class="item">1</a>
+        <a class="icon item">
+          <i class="right chevron icon"></i>
+        </a>
+      </div>
+	 </div> 
+	  
+    </th>
+  </tr></tfoot>
+</table>
+
+</div>
+
+</html>
